@@ -25,4 +25,4 @@ BITRATE=$(echo $((MAX_SIZE / ADJUSTED_DURATION*75/100)))
 
 echo video should have a bitrate of $(((MAX_SIZE / ADJUSTED_DURATION)/1000)) kbps
 
-ffmpeg -i "$1" -c:v libx264 -b:v "$BITRATE" -pix_fmt yuv420p -c:a aac -preset slow -tune film "compressed-$1"
+ffmpeg -i "$1" -c:v libvpx-vp9 -b:v "$BITRATE" -c:a libopus "compressed-$1"
