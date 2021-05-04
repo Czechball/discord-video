@@ -29,4 +29,4 @@ BITRATE=$(echo $((MAX_SIZE / ADJUSTED_DURATION*75/100)))
 
 echo video should have a bitrate of $(((MAX_SIZE / ADJUSTED_DURATION)/1000)) kbps
 
-ffmpeg -i "$1" -c:v libvpx-vp9 -b:v "$BITRATE" -c:a -b:a 96K libopus "compressed-$1.webm"
+ffmpeg -i "$1" -c:v libvpx-vp9 -b:v "$BITRATE" -c:a libopus -b:a 96K "compressed-$1.webm"
