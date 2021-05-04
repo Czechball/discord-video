@@ -6,3 +6,5 @@ A simple bash script that uses ffmpeg to compress videos to fit under 8 MB (Disc
 
 ## Usage
 ``./discord-video.sh <video-file>``
+
+Output will then be a file prefixed with "compressed-"
