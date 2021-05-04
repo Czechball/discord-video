@@ -21,7 +21,7 @@ echo "$1" is a video file and is $DURATION seconds long
 # Calculate bitrate
 
 ADJUSTED_DURATION=$(printf "%.0f\n" "$DURATION")
-BITRATE=$(echo $((MAX_SIZE / ADJUSTED_DURATION)))
+BITRATE=$(echo $((MAX_SIZE / ADJUSTED_DURATION*75/100)))
 
 echo video should have a bitrate of $(((MAX_SIZE / ADJUSTED_DURATION)/1000)) kbps
 
