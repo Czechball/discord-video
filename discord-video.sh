@@ -16,6 +16,10 @@ fi
 
 DURATION=$(ffprobe -hide_banner "$1" -show_entries format=duration -v quiet -of csv="p=0" || echo Error: "$1" is not a video file; exit)
 
+if [[ "$DURATION" == "" ]]; then
+	exit
+fi
+
 echo "$1" is a video file and is $DURATION seconds long
 
 # Calculate bitrate
