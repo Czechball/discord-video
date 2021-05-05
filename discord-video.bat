@@ -30,7 +30,7 @@ set /A SHOULD_BITRATE=(%MAX_SIZE% / %rounded%)/1000
 
 echo video should have a bitrate of %SHOULD_BITRATE% kbps
 
-ffmpeg -i "%1" -c:v libvpx-vp9 -b:v "%VIDEO_BITRATE%" -vf scale=1280:720 -c:a libopus -b:a "%AUDIO_BITRATE%" "%1-compressed.webm"
+ffmpeg -hide_banner -i "%1" -c:v libvpx-vp9 -b:v "%VIDEO_BITRATE%" -vf scale=1280:720 -c:a libopus -b:a "%AUDIO_BITRATE%" "%1-compressed.webm"
 
 pause
 goto end
