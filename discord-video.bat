@@ -1,6 +1,7 @@
 @echo off
 
-set /A MAX_SIZE=64000000
+set /A MAX_VIDEO_SIZE=60000000
+set /A MAX_AUDIO_SIZE=4000000
 
 if [%1]==[] goto nofile
 
@@ -23,12 +24,13 @@ for /f "tokens=1,2 delims=." %%a  in ("%var%") do (
 
 set /a rounded=%first_part%
 
-set /A BITRATE=%MAX_SIZE% / %rounded% * 75 / 100
+set /A VIDEO_BITRATE=%MAX_SIZE% / %rounded% * 60 / 100
+set /A AUDIO_BITRATE=%MAX_SIZE% / %rounded% * 75 / 100
 set /A SHOULD_BITRATE=(%MAX_SIZE% / %rounded%)/1000
 
 echo video should have a bitrate of %SHOULD_BITRATE% kbps
 
-ffmpeg -i "%1" -c:v libvpx-vp9 -b:v "%BITRATE%" -c:a libopus -b:a 96K "%1-compressed.webm"
+ffmpeg -i "%1" -c:v libvpx-vp9 -b:v "%VIDEO_BITRATE%" -vf scale=1280:720 -c:a libopus -b:a "%AUDIO_BITRATE%" "%1-compressed.webm"
 
 pause
 goto end
