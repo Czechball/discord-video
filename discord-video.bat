@@ -3,8 +3,6 @@
 set /A MAX_VIDEO_SIZE=60000000
 set /A MAX_AUDIO_SIZE=4000000
 
-echo %~1
-
 if "%~1" == "" goto nofile
 
 rem Check if file is video, get duration if it is
