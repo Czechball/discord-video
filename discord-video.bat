@@ -24,8 +24,8 @@ for /f "tokens=1,2 delims=." %%a  in ("%var%") do (
 
 set /a rounded=%first_part%
 
-set /A VIDEO_BITRATE=%MAX_SIZE% / %rounded% * 60 / 100
-set /A AUDIO_BITRATE=%MAX_SIZE% / %rounded% * 75 / 100
+set /A VIDEO_BITRATE=%MAX_VIDEO_SIZE% / %rounded% * 60 / 100
+set /A AUDIO_BITRATE=%MAX_AUDIO_SIZE% / %rounded% * 75 / 100
 set /A SHOULD_BITRATE=(%MAX_SIZE% / %rounded%)/1000
 
 echo video should have a bitrate of %SHOULD_BITRATE% kbps
