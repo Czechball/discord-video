@@ -24,13 +24,13 @@ for /f "tokens=1,2 delims=." %%a  in ("%var%") do (
 
 set /a rounded=%first_part%
 
-set /A VIDEO_BITRATE=%MAX_VIDEO_SIZE% / %rounded% * 60 / 100
-set /A AUDIO_BITRATE=%MAX_AUDIO_SIZE% / %rounded% * 75 / 100
-set /A SHOULD_BITRATE=(%MAX_SIZE% / %rounded%)/1000
+set /A VIDEO_BITRATE=%MAX_VIDEO_SIZE% / %rounded%
+set /A AUDIO_BITRATE=%MAX_AUDIO_SIZE% / %rounded%
+set /A SHOULD_BITRATE=%VIDEO_BITRATE% + %AUDIO_BITRATE%
 
 echo video should have a bitrate of %SHOULD_BITRATE% kbps
 
-ffmpeg -hide_banner -i "%~1" -c:v libvpx-vp9 -b:v "%VIDEO_BITRATE%" -vf scale=1280:720 -c:a libopus -b:a "%AUDIO_BITRATE%" "%~1-compressed.webm"
+ffmpeg -hide_banner -y -i "%~1" -c:v libx264 -preset slower -b:v "%VIDEO_BITRATE%" -vf scale=1280:720 -pass 1 -an -f mp4 NUL && ffmpeg -hide_banner -i "%~1" -c:v libx264 -preset slower -b:v "%VIDEO_BITRATE%" -vf scale=1280:720 -pass 2 -c:a aac -b:a "%AUDIO_BITRATE%" "%~1-compressed.mp4"
 
 goto end
 
