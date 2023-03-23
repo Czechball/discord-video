@@ -24,10 +24,54 @@ fi
 
 echo "$1" is a video file and is "$DURATION" seconds long
 
+WIDTH=$(ffprobe -hide_banner "$1" -v quiet -show_entries stream=width -of csv=p=0)
+HEIGHT=$(ffprobe -hide_banner "$1" -v quiet -show_entries stream=height -of csv=p=0)
+ROTATION=$(ffprobe -hide_banner "$1" -v quiet -show_entries stream_side_data=rotation -of csv=p=0)
+
+WIDTH=${WIDTH%%,}
+HEIGHT=${HEIGHT%%,}
+ROTATION=${ROTATION%%,}
+[ "$ROTATION" ] || ROTATION=0
+
+if [ "$WIDTH" -gt "$HEIGHT" ] && [ "${ROTATION##-}" != 90 ]; then
+  [ "$WIDTH" -gt 1280 ] && WIDTH=1280
+  HEIGHT=-1
+  echo "$1 is horizontal video; scaling to $WIDTH x $HEIGHT"
+else
+  WIDTH=-1
+  [ "$HEIGHT" -gt 1280 ] && HEIGHT=1280
+  echo "$1 is vertical video; scaling to $WIDTH x $HEIGHT"
+fi
+
 # Calculate bitrate
 
 ADJUSTED_DURATION=$(printf "%.0f\n" "$DURATION")
 VIDEO_BITRATE=$((MAX_VIDEO_SIZE / ADJUSTED_DURATION))
 #AUDIO_BITRATE=$(echo $((MAX_AUDIO_SIZE / ADJUSTED_DURATION)))
 
-ffmpeg -hide_banner -i "$1" -c:v libvpx-vp9 -row-mt 1 -b:v "$VIDEO_BITRATE" -pix_fmt yuv420p -vf scale=1280:720 -pass 1 -an -f null /dev/null && ffmpeg -hide_banner -i "$1" -c:v libvpx-vp9 -cpu-used 3 -row-mt 1 -b:v "$VIDEO_BITRATE" -pix_fmt yuv420p -vf scale=1280:720 -pass 2 "$1-compressed.mp4"
+set -e
+
+ffmpeg \
+  -hide_banner \
+  -i "$1" \
+  -c:v libvpx-vp9 \
+  -row-mt 1 \
+  -b:v "$VIDEO_BITRATE" \
+  -pix_fmt yuv420p \
+  -vf scale=$WIDTH:$HEIGHT \
+  -pass 1 \
+  -an \
+  -f null \
+  /dev/null
+
+ffmpeg \
+  -hide_banner \
+  -i "$1" \
+  -c:v libvpx-vp9 \
+  -cpu-used 3 \
+  -row-mt 1 \
+  -b:v "$VIDEO_BITRATE" \
+  -pix_fmt yuv420p \
+  -vf scale=$WIDTH:$HEIGHT \
+  -pass 2 \
+  "$1-compressed.mp4"
